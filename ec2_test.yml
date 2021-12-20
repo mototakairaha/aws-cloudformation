@@ -10,6 +10,7 @@ Parameters:
   MyIP:
     Description: IP address allowed to access EC2
     Type: String
+    Default: "0.0.0.0/0"
 Resources:
   EC2:
     Type: AWS::EC2::Instance
