@@ -1,0 +1,187 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: VPC and Subnet Create
+# -------------------------------------
+# Metadata 
+# -------------------------------------
+Metadata:
+  "AWS::CloudFormation::Interface":
+    ParameterGroups:
+      - Label:
+          default: "Project Name Prefix"
+        Parameters:
+          - Prefix
+      - Label:
+          default: "Network Configuration"
+          parameters: 
+            - VPCCIDR
+            - PublicSubnetACIDR
+            - PublicSubnetBCIDR
+    ParameterLabels:
+      VPCCIDR:
+        default: "VPC CIDR"
+      PublicSubnetACIDR:
+        default: "PublicSubnetA CIDR"
+      PublicSubnetBCIDR:
+        default: "PublicSubnetB CIDR"
+# -------------------------------------
+# Input Parameters
+# -------------------------------------
+Parameters:
+  Prefix:
+    Type: String
+  VPCCIDR:
+    Type: String
+    Default: "10.0.0.0/24"
+  PublicSubnetACIDR:
+    Type: String
+    Default: "10.0.0.0/27"
+  PublicSubnetBCIDR:
+    Type: String
+    Default: "10.0.0.128/27"
+
+# -------------------------------------
+# Resource
+# -------------------------------------
+Resources:
+# -------------------------------------
+# VPC
+# -------------------------------------
+# VPC Create
+  MyVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VPCCIDR
+      Tags:
+      - Key: Name
+        Value: !Sub "${Prefix}-VPC"
+# InternetGateway Create
+  InternetGateway:
+    Type: 'AWS::EC2::InternetGateway'
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub "${Prefix}-VPC-IGW"
+# IGW Attach
+  AttachGateway:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      VpcId: !Ref 'MyVPC'
+      InternetGatewayId: !Ref InternetGateway
+# -------------------------------------
+# Subnet
+# -------------------------------------
+# Public SubnetA Create
+  PublicSubnetA:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      AvailabilityZone: "ap-northeast-1a"
+      CidrBlock: !Ref PublicSubnetACIDR
+      VpcId: !Ref 'MyVPC'
+      MapPublicIpOnLaunch: 'true'
+      Tags:
+        - Key: Name
+          Value: !Sub "${Prefix}-VPC-PublicSubnet-A"
+# Public SubnetB Create
+  PublicSubnetB:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      AvailabilityZone: "ap-northeast-1c"
+      CidrBlock: !Ref PublicSubnetBCIDR
+      VpcId: !Ref 'MyVPC'
+      MapPublicIpOnLaunch: 'true'
+      Tags:
+        - Key: Name
+          Value: !Sub "${Prefix}-VPC-PublicSubnet-B"
+# -------------------------------------
+# RouteTable
+# -------------------------------------
+# Public RouteTableA Create
+  RouteTableA:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref 'MyVPC'
+      Tags:
+        - Key: Name
+          Value: !Sub "${Prefix}-VPC-RouteTable-A"
+# Public RouteTableB Create
+  RouteTableB:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref 'MyVPC'
+      Tags:
+        - Key: Name
+          Value: !Sub "${Prefix}-VPC-RouteTable-B"
+# -------------------------------------
+# Routing
+# -------------------------------------
+# Public RouteA Create
+  RouteA:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      RouteTableId: !Ref RouteTableA
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+# Public RouteB Create
+  RouteA:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      RouteTableId: !Ref RouteTableB
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+# -------------------------------------
+# RouteTable Associate
+# -------------------------------------
+# PublicRouteTable Associate SubnetA
+  SubnetARouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref PublicSubnetA
+      RouteTableId: !Ref RouteTableA
+# PublicRouteTable Associate SubnetB
+  SubnetBRouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref PublicSubnetB
+      RouteTableId: !Ref RouteTableB
+# -------------------------------------
+# Output Parameters
+# -------------------------------------
+Outputs:
+# VPC
+  MyVPC:
+    Value: !Ref MyVPC
+    Export:
+      Name: !Sub "${Prefix}-VPC"
+  VPCCIDR:
+    Value: !Ref VPCCIDR
+    Export:
+      Name: !Sub "${Prefix}-VPC-CIDR"
+# Subnet
+  PublicSubnetA:
+    Value: !Ref PublicSubnetA
+    Export:
+      Name: !Sub "${Prefix}-VPC-PublicSubnet-A"
+  PublicSubnetACIDR:
+    Value: !Ref PublicSubnetACIDR
+    Export:
+      Name: !Sub "${Prefix}-VPC-PublicSubnet-A-CIDR"
+  PublicSubnetB:
+    Value: !Ref PublicSubnetB
+    Export:
+      Name: !Sub "${Prefix}-VPC-PublicSubnet-B"
+  PublicSubnetBCIDR:
+    Value: !Ref PublicSubnetBCIDR
+    Export:
+      Name: !Sub "${Prefix}-VPC-PublicSubnet-B-CIDR"
+# Route
+  RouteTableA:
+    Value: !Ref RouteTableA
+    Export:
+      Name: !Sub "${Prefix}-VPC-RouteTable-A"
+  RouteTableB:
+    Value: !Ref RouteTableB
+    Export:
+      Name: !Sub "${Prefix}-VPC-RouteTable-B"
+# -------------------------------------
+# Ref: "https://qiita.com/okubot55/items/b18a5dd5166f1ec2696c"
+# -------------------------------------

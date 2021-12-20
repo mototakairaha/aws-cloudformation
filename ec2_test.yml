@@ -1,0 +1,55 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Provision EC2
+Parameters:
+  UserName:
+    Description: Enter user last name
+    Type: String
+  KeyName:
+    Description: The EC2 Key pair to allow SSH access to the instance
+    Type: "AWS::EC2::KeyPair::KeyName"
+  MyIP:
+    Description: IP address allowed to access EC2
+    Type: String
+Resources:
+  EC2:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0218d08a1f9dac831
+      KeyName: !Ref KeyName
+      InstanceType: t2.micro
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: "true"
+          DeviceIndex: "0"
+          SubnetId: !ImportValue PublicSubnetA
+          GroupSet:
+            - !Ref EC2SG
+      BlockDeviceMappings:
+        - DeviceName: '/dev/xvda'
+          Ebs:
+            VolumeType: 'gp2'
+            VolumeSize: 30
+      UserDate: !Base64 |
+        #!/bin/bash
+        hostnamectl set-hostname teraform-${UserName}
+        localectl set-locale LAMG=en_US.UTF-8
+        timedatectl set-timezone Asia/Tokyo
+        sudo yum install -y yum-utils
+        sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
+        sudo yum -y install terraform
+      Tags:
+        - Key: Name
+          Value: !Sub 'teraform-${UserName}'
+        - Key: Owner
+          Value: !Ref UserName
+  EC2SG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub '${UserName}-ec2-sg'
+      GroupDescription: Allow SSH
+      VpcId: !ImportValue MyVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref MyIP
+
