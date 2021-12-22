@@ -160,28 +160,28 @@ Outputs:
   PublicSubnetA:
     Value: !Ref PublicSubnetA
     Export:
-      Name: !Sub "${Prefix}-VPC-PublicSubnet-A"
+      Name: PublicSubnetA
   PublicSubnetACIDR:
     Value: !Ref PublicSubnetACIDR
     Export:
-      Name: !Sub "${Prefix}-VPC-PublicSubnet-A-CIDR"
+      Name: PublicSubnetACIDR
   PublicSubnetB:
     Value: !Ref PublicSubnetB
     Export:
-      Name: !Sub "${Prefix}-VPC-PublicSubnet-B"
+      Name: PublicSubnetB
   PublicSubnetBCIDR:
     Value: !Ref PublicSubnetBCIDR
     Export:
-      Name: !Sub "${Prefix}-VPC-PublicSubnet-B-CIDR"
+      Name: PublicSubnetBCIDR
 # Route
   RouteTableA:
     Value: !Ref RouteTableA
     Export:
-      Name: !Sub "${Prefix}-VPC-RouteTable-A"
+      Name: RouteTableA
   RouteTableB:
     Value: !Ref RouteTableB
     Export:
-      Name: !Sub "${Prefix}-VPC-RouteTable-B"
+      Name: RouteTableB
 # -------------------------------------
 # Ref: "https://qiita.com/okubot55/items/b18a5dd5166f1ec2696c"
 # -------------------------------------
