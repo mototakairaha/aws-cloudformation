@@ -29,14 +29,20 @@ Resources:
           Ebs:
             VolumeType: 'gp2'
             VolumeSize: 30
-      UserData: !Base64 |
-          #!/bin/bash
-          hostnamectl set-hostname '${UserName}-terraform'
-          localectl set-locale LAMG=en_US.UTF-8
-          timedatectl set-timezone Asia/Tokyo
-          sudo yum install -y yum-utils
-          sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
-          sudo yum -y install terraform
+      UserData: 
+        Fn::Base64: !Sub 
+          - |
+            #!/bin/bash
+            localectl set-locale LAMG=en_US.UTF-8
+            timedatectl set-timezone Asia/Tokyo
+            sudo yum install -y yum-utils
+            sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
+            sudo yum -y install terraform
+            hostnamectl set-hostname ${UserName}-terraform
+          - {
+              UserName: !Ref UserName
+            }
+
       Tags:
         - Key: Name
           Value: !Sub 'teraform-${UserName}'
