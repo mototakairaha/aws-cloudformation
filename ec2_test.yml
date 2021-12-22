@@ -29,7 +29,7 @@ Resources:
           Ebs:
             VolumeType: 'gp2'
             VolumeSize: 30
-      UserDate: !Base64 |
+      UserData: !Base64 |
         #!/bin/bash
         hostnamectl set-hostname teraform-${UserName}
         localectl set-locale LAMG=en_US.UTF-8
