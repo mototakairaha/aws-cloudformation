@@ -151,11 +151,11 @@ Outputs:
   MyVPC:
     Value: !Ref MyVPC
     Export:
-      Name: !Sub "${Prefix}-VPC"
+      Name: MyVPC
   VPCCIDR:
     Value: !Ref VPCCIDR
     Export:
-      Name: !Sub "${Prefix}-VPC-CIDR"
+      Name: VPCCIDR
 # Subnet
   PublicSubnetA:
     Value: !Ref PublicSubnetA
