@@ -21,7 +21,9 @@ Resources:
       NetworkInterfaces:
         - AssociatePublicIpAddress: "true"
           DeviceIndex: "0"
-          SubnetId: !ImportValue PublicSubnetA
+          SubnetId: 
+            !ImportValue:
+              !Ref  PublicSubnetA
           GroupSet:
             - !Ref EC2SG
       BlockDeviceMappings:
