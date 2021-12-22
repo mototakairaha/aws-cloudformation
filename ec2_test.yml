@@ -29,11 +29,9 @@ Resources:
           Ebs:
             VolumeType: 'gp2'
             VolumeSize: 30
-      UserData: 
-        Fn::Base64: !Sub 
-        - |
+      UserData: !Base64 |
           #!/bin/bash
-          hostnamectl set-hostname 'terraform-${UserName}'
+          hostnamectl set-hostname '${UserName}-terraform'
           localectl set-locale LAMG=en_US.UTF-8
           timedatectl set-timezone Asia/Tokyo
           sudo yum install -y yum-utils
