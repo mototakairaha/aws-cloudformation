@@ -117,13 +117,15 @@ Resources:
 # Public RouteA Create
   RouteA:
     Type: 'AWS::EC2::Route'
+    DependsOn: AttachGateway
     Properties:
       RouteTableId: !Ref RouteTableA
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref InternetGateway
 # Public RouteB Create
-  RouteA:
+  RouteB:
     Type: 'AWS::EC2::Route'
+    DependsOn: AttachGateway
     Properties:
       RouteTableId: !Ref RouteTableB
       DestinationCidrBlock: 0.0.0.0/0
