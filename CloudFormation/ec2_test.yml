@@ -39,18 +39,6 @@ Resources:
             sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
             sudo yum -y install terraform
             sudo yum -y install git
-            export AWS_ACCESS_KEY_ID=AKIARXZXHXUXVYMYCD4R
-            export AWS_SECRET_ACCESS_KEY=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
-            export AWS_DEFAULT_REGION=ap-northeast-1
-            export AWS_DEFAULT_OUTPUT=json
-            aws s3 cp s3://iraha-cloudformation-backet/Secret/secret ~/.ssh/id_rsa
-            aws s3 cp s3://iraha-cloudformation-backet/Secret/secret2 ~/.ssh/id_rsa.pub
-            chmod 400 id_rsa
-            aws s3 cp s3://iraha-cloudformation-backet/Secret/config ~/.ssh/config
-            chmod 600 id_rsa
-            git clone github:mototakairaha/TerraformAnsible.git
-            git config --global user.email "mototaka.iraha@tafs.co.jp"
-            git config --global user.name "mototaka.iraha"
             hostnamectl set-hostname ${UserName}-terraform
           - {
               UserName: !Ref UserName
