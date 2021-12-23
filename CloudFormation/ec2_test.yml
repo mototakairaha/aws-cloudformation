@@ -49,6 +49,8 @@ Resources:
             aws s3 cp s3://iraha-cloudformation-backet/Secret/config ~/.ssh/config
             chmod 600 id_rsa
             git clone github:mototakairaha/TerraformAnsible.git
+            git config --global user.email "mototaka.iraha@tafs.co.jp"
+            git config --global user.name "mototaka.iraha"
             hostnamectl set-hostname ${UserName}-terraform
           - {
               UserName: !Ref UserName
